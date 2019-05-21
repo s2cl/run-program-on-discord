@@ -1,7 +1,7 @@
 import requests
 from time import sleep
 
-def run_prog(lang, code, api="paiza"):
+def run_prog(lang, code):
     """Function that sends code of argument to program execution api 
     and returns standard output.
     
@@ -14,33 +14,30 @@ def run_prog(lang, code, api="paiza"):
     return
         str : stdout
     """
+    url = "https://wandbox.org/api"
+    compiler = {
+        "python3"   :   "cpython-head",
+        "c"         :   "gcc-head-c",
+        "c++"       :   "gcc-head",
+        "OCaml"     :   "ocaml-4.06.1",
+        "php"       :   "php-head",
+        "JavaScript":   "nodejs-head",
+        "ruby"      :   "ruby-head",
+        "Go"        :   "go-head",
+        "Rust"      :   "rust-head"
+    }
 
-    if api == "paiza":
-        # Set URL of paiza.io
-        # docs : http://api.paiza.io/docs/swagger/#!/runners/
-        url_create = "http://api.paiza.io:80/runners/create"
-        url_get_status = "http://api.paiza.io:80/runners/get_status"
-        url_get_detail = "http://api.paiza.io:80/runners/get_details"
-        # Send a program to get an ID
-        params = dict(source_code=code,language=lang,api_key="guest")
-        response = requests.post(url_create, params=params).json()
-        run_id = response["id"]
-        # Check execution status every second, and return standard output when finished.
-        # if it exceeds 30 seconds, Stop checking.
-        for i in range(30):
-            tmp = requests.get(url_get_status, params=dict(id=run_id,api_key="guest")).json()
-            if tmp["status"] == "completed":
-                res = requests.get(url_get_detail, params=dict(id=run_id,api_key="guest")).json()
-            
-                stdout = res["build_stderr"] if res["build_stderr"] else ""
-                stdout +=res["stdout"] if res["stdout"] else ""
-                stdout +=res["stderr"] if res["stderr"] else ""
-                return stdout
-            sleep(1)
-        return False
+    param = dict(
+        compiler=compiler[lang],
+        code=code
+        )
+    r = requests.post(url+"/compile.json", json=param).json()
 
-    elif api == "wandbox":
-        # Set URL of wandbox
-        pass
-        
-    return False
+    stdout = ""
+    
+    if "program_message" in r:
+        stdout += f"```\n{r['program_message']}```"
+    if "compiler_message" in r:
+        stdout += f"```\n{r['compiler_message']}```\n"
+
+    return stdout
