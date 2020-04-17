@@ -41,3 +41,20 @@ def run_prog(lang, code):
         stdout += f"```\n{r['compiler_message']}```\n"
 
     return stdout
+
+
+def pull_out_codeblock(text, block_suffix='```'):
+    """Function that pull out codeblock in `text`
+    argument
+        str : text
+            target text.
+        str : block_suffix
+            end of codeblock.
+
+    return
+        str : pulled out codeblock
+    """
+    i = text.rfind(block_suffix)
+    if i == -1:
+        return text
+    return text[:i]
