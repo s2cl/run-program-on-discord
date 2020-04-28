@@ -2,6 +2,7 @@ from time import sleep
 
 import requests
 
+from .exceptions import WandBoxServiceError
 
 BASE_URL = "https://wandbox.org/api"
 
@@ -36,14 +37,22 @@ def run_prog(lang, code):
         compiler=COMPILER_MAP[lang],
         code=code
     )
-    r = requests.post(BASE_URL + "/compile.json", json=param).json()
+    try:
+        response = requests.post(BASE_URL + "/compile.json", json=param)
+        if response.status_code != 200:
+            raise WandBoxServiceError(
+                status=response.status_code, body=response.text)
 
-    stdout = ""
+        r = response.json()
 
-    if "program_message" in r:
-        stdout += f"```\n{r['program_message']}```"
-    if "compiler_message" in r:
-        stdout += f"```\n{r['compiler_message']}```\n"
+        stdout = ""
+
+        if "program_message" in r:
+            stdout += f"```\n{r['program_message']}```"
+        if "compiler_message" in r:
+            stdout += f"```\n{r['compiler_message']}```\n"
+    except WandBoxServiceError as e:
+        return str(e)
 
     return stdout
 
