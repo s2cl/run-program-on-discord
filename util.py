@@ -2,7 +2,7 @@ from time import sleep
 
 import requests
 
-from .exceptions import WandBoxServiceError
+from exceptions import WandBoxServiceError
 
 BASE_URL = "https://wandbox.org/api"
 
