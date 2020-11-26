@@ -8,8 +8,7 @@ from languages import Language
 BASE_URL = "https://wandbox.org/api"
 
 
-
-def run_prog(lang, code):
+def run_prog(lang: Language, code: str):
     """Function that sends code of argument to program execution api 
     and returns standard output.
     
@@ -47,7 +46,7 @@ def run_prog(lang, code):
     return stdout
 
 
-def pull_out_codeblock(text, block_suffix='```'):
+def pull_out_codeblock(text: str, block_suffix: str = '```'):
     """Function that pull out codeblock in `text`
     argument
         str : text
