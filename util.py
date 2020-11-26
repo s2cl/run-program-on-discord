@@ -5,6 +5,7 @@ import requests
 from exceptions import WandBoxServiceError
 from languages import Language
 
+
 BASE_URL = "https://wandbox.org/api"
 
 
