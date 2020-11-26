@@ -53,6 +53,12 @@ async def js(ctx, *, text):
 
 
 @client.command()
+async def javascript(ctx, *, text):
+    stdout = run_prog(Language.javascript, pull_out_codeblock(text, "```"))
+    await ctx.send(stdout)
+
+
+@client.command()
 async def ruby(ctx, *, text):
     stdout = run_prog(Language.ruby, pull_out_codeblock(text, "```"))
     await ctx.send(stdout)
