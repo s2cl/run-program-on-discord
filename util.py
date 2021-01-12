@@ -3,28 +3,18 @@ from time import sleep
 import requests
 
 from exceptions import WandBoxServiceError
+from languages import Language
+
 
 BASE_URL = "https://wandbox.org/api"
 
-COMPILER_MAP = {
-    "python3"    :   "cpython-head",
-    "c"          :   "gcc-head-c",
-    "c++"        :   "gcc-head",
-    "OCaml"      :   "ocaml-4.06.1",
-    "php"        :   "php-head",
-    "JavaScript" :   "nodejs-head",
-    "ruby"       :   "ruby-head",
-    "Go"         :   "go-head",
-    "Rust"       :   "rust-head"
-}
 
-
-def run_prog(lang, code):
+def run_prog(lang: Language, code: str):
     """Function that sends code of argument to program execution api 
     and returns standard output.
     
     argument
-        str : lang
+        Language : lang
             programing langage
         str : code
             program code
@@ -34,7 +24,7 @@ def run_prog(lang, code):
     """
 
     param = dict(
-        compiler=COMPILER_MAP[lang],
+        compiler=lang.value,
         code=code
     )
     try:
@@ -57,7 +47,7 @@ def run_prog(lang, code):
     return stdout
 
 
-def pull_out_codeblock(text, block_suffix='```'):
+def pull_out_codeblock(text: str, block_suffix: str = '```'):
     """Function that pull out codeblock in `text`
     argument
         str : text
